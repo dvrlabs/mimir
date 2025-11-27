@@ -32,33 +32,11 @@ Chat_Session :: struct {
     system_prompt: string,
 }
 
-json_escape :: proc(s: string) -> string {
-    builder := strings.builder_make()
-    defer strings.builder_destroy(&builder)
 
-    for r in s {
-        switch r {
-        case '"':
-            strings.write_string(&builder, "\\\"")
-        case '\\':
-            strings.write_string(&builder, "\\\\")
-        case '\n':
-            strings.write_string(&builder, "\\n")
-        case '\r':
-            strings.write_string(&builder, "\\r")
-        case '\t':
-            strings.write_string(&builder, "\\t")
-        case '\b':
-            strings.write_string(&builder, "\\b")
-        case '\f':
-            strings.write_string(&builder, "\\f")
-        case:
-            strings.write_rune(&builder, r)
-        }
-    }
-
-    return strings.clone(strings.to_string(builder))
+destroy_session :: proc(sesh: ^Chat_Session) {
+    delete(sesh.messages)
 }
+
 
 chat_session_init :: proc(system_prompt: string) -> Chat_Session {
     session := Chat_Session {
@@ -70,8 +48,9 @@ chat_session_init :: proc(system_prompt: string) -> Chat_Session {
 
 chat :: proc(session: ^Chat_Session, user_message: string) -> LLM_Response {
     headers := make(map[string]string)
-    defer delete(headers)
     headers["Content-Type"] = "application/json"
+    defer delete(headers)
+
     append(&session.messages, Message{"user", user_message})
 
     builder := strings.builder_make()
@@ -107,8 +86,8 @@ chat :: proc(session: ^Chat_Session, user_message: string) -> LLM_Response {
 
 ask :: proc(question: string) -> LLM_Response {
     headers := make(map[string]string)
-    defer delete(headers)
     headers["Content-Type"] = "application/json"
+    defer delete(headers)
 
     escaped_system := json_escape(DEFAULT_SYSTEM_ROLE)
     defer delete(escaped_system)

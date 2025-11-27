@@ -1,41 +1,30 @@
 package main
 
 import "core:fmt"
-import "core:strings"
 import "llm"
 
 main :: proc() {
+    test_ask()
+    test_chat()
+}
+
+test_ask :: proc() {
     resp := llm.ask("Hello! Excited to ask some questions. ")
     defer llm.destroy_response(&resp)
     fmt.println(resp.answer)
-    // fmt.println(resp.thoughts)
-    // fmt.println(resp.error)
+}
 
-    session := llm.chat_session_init(
-        "You are a homeless computer science professor who has a PHD. You are providing assistance to high school kids to cheer yourself up. ",
-    )
-    defer delete(session.messages)
-
-    messages := [3]string {
-        "Hi,",
-        "Could you please help me write a basic python program?",
-        "I need an example thats OOP.",
+test_chat :: proc() {
+    session, loaded := llm.load_session()
+    if !loaded {
+        session = llm.chat_session_init("You are a helpful assistant")
     }
-    mesg1 := strings.join(messages[:], " ")
-    defer delete(mesg1)
-    // fmt.println(mesg1)
+    defer delete(session.messages)
+    defer llm.save_session(&session)
 
-    response1 := llm.chat(&session, mesg1)
-    // fmt.println(response1.thoughts)
-    fmt.println(response1.answer)
-
-
-    resp2_msg := `Hi,
-    How have you been lately professor?
-    I know you've been going through a rough time.
+    resp2_msg := `
+        Can you help me update this nice code to also be a pyqt5 gui so i can test it? 
     `
     response2 := llm.chat(&session, resp2_msg)
-    // fmt.println(response2.thoughts)
     fmt.println(response2.answer)
-
 }
