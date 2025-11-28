@@ -6,6 +6,8 @@ Command :: enum {
     Ask,
     Chat,
     ClearChat,
+    Code,
+    ClearCode,
     Help,
     Version,
 }
@@ -24,6 +26,10 @@ parse_args :: proc() -> (Command, []string) {
             command = .Chat
         case "-clrc", "--clear-chat":
             command = .ClearChat
+        case "-co", "--code":
+            command = .Code
+        case "-clrco", "--clear-code":
+            command = .ClearCode
         case "-v", "--version":
             command = .Version
         case "-h", "--help":
@@ -48,6 +54,10 @@ main :: proc() {
         chat(args)
     case .ClearChat:
         clear_chat(args)
+    case .Code:
+        code(args)
+    case .ClearCode:
+        clear_code(args)
     case .Version:
         version()
     case .Help:

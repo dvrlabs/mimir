@@ -26,6 +26,31 @@ chat :: proc(args: []string) {
 
 clear_chat :: proc(args: []string) {
     llm.conversation_clear_session()
+    fmt.println("Cleared:", llm.CONVERSATION_SESSION)
+}
+
+code :: proc(args: []string) {
+    session, loaded := llm.code_load_session()
+    system_prompt := `
+        You are a code generator.
+        You DO NOT converse, you only generate code when requested.
+        Your output will directly be entered into a source code file.
+        Your output MUST NOT be in a markdown code block..
+    `
+    if !loaded {
+        session = llm.chat_session_init(system_prompt)
+    }
+    defer delete(session.messages)
+    defer llm.code_save_session(&session)
+
+    message := args[0]
+    response := llm.chat(&session, message)
+    fmt.println(response.answer)
+}
+
+clear_code :: proc(args: []string) {
+    llm.code_clear_session()
+    fmt.println("Cleared:", llm.CODE_SESSION)
 }
 
 help :: proc() {

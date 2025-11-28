@@ -33,7 +33,7 @@ test_chat :: proc() {
 }
 
 test_code :: proc() {
-    session, loaded := llm.conversation_load_session()
+    session, loaded := llm.code_load_session()
     system_prompt := `
         You are a code generator.
         You DO NOT converse, you only generate code when requested.
