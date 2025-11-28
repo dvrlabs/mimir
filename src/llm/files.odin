@@ -15,6 +15,7 @@ file_save_session :: proc(file_path: string, session: ^Chat_Session) -> bool {
         fmt.eprintln("Failed to create config directory:", dir)
         return false
     }
+    defer delete(dir)
 
     data, err := json.marshal(session^, {pretty = true})
     if err != nil {

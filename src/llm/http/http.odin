@@ -176,6 +176,7 @@ _parse_http_response :: proc(response: string) -> HTTP_Response {
     if len(header_body_split) > 1 {
         body_section = strings.join(header_body_split[1:], "\r\n\r\n")
     }
+    defer delete(body_section)
 
     // Parse status line
     lines := strings.split(header_section, "\r\n")

@@ -49,6 +49,7 @@ expand_home :: proc(path: string) -> string {
     if home == "" {
         home = os.get_env("USERPROFILE") // Windows
     }
+    defer delete(home)
 
     if len(path) == 1 {
         return strings.clone(home) // Just "~"

@@ -34,7 +34,16 @@ Chat_Session :: struct {
 
 
 destroy_session :: proc(sesh: ^Chat_Session) {
+    for msg in sesh.messages {
+        delete(msg.role)
+        delete(msg.content)
+    }
     delete(sesh.messages)
+    delete(sesh.system_prompt)
+}
+
+add_message :: proc(sesh: ^Chat_Session, role: string, content: string) {
+    append(&sesh.messages, Message{strings.clone(role), strings.clone(content)})
 }
 
 
@@ -42,7 +51,7 @@ chat_session_init :: proc(system_prompt: string) -> Chat_Session {
     session := Chat_Session {
         system_prompt = system_prompt,
     }
-    append(&session.messages, Message{"system", system_prompt})
+    add_message(&session, "system", system_prompt)
     return session
 }
 
@@ -51,7 +60,7 @@ chat :: proc(session: ^Chat_Session, user_message: string) -> LLM_Response {
     headers["Content-Type"] = "application/json"
     defer delete(headers)
 
-    append(&session.messages, Message{"user", user_message})
+    add_message(session, "user", user_message)
 
     builder := strings.builder_make()
     defer strings.builder_destroy(&builder)
@@ -80,7 +89,7 @@ chat :: proc(session: ^Chat_Session, user_message: string) -> LLM_Response {
     // fmt.println("Request body:", body)
 
     response := post_to_llm(ENDPOINT, body, headers)
-    append(&session.messages, Message{"assistant", response.answer})
+    add_message(session, "assistant", response.answer)
     return response
 }
 

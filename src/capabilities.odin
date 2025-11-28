@@ -16,11 +16,12 @@ chat :: proc(args: []string) {
     if !loaded {
         session = llm.chat_session_init("You are a helpful assistant")
     }
-    defer delete(session.messages)
+    defer llm.destroy_session(&session)
     defer llm.conversation_save_session(&session)
 
     message := args[0]
     response := llm.chat(&session, message)
+    defer llm.destroy_response(&response)
     fmt.println(response.answer)
 }
 
@@ -41,11 +42,12 @@ code :: proc(args: []string) {
     if !loaded {
         session = llm.chat_session_init(system_prompt)
     }
-    defer delete(session.messages)
+    defer llm.destroy_session(&session)
     defer llm.code_save_session(&session)
 
     message := args[0]
     response := llm.chat(&session, message)
+    defer llm.destroy_response(&response)
     fmt.println(response.answer)
 }
 
