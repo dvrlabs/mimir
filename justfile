@@ -20,14 +20,8 @@ build-asan:
     odin build src -out:bin/mimir_asan -debug -o:none -sanitize:address
     @echo "✓ Built: bin/mimir_asan"
 
-# Build with Undefined Behavior Sanitizer
-build-ubsan:
-    @echo "Building with UBSan..."
-    odin build src -out:bin/mimir_ubsan -debug -o:none -sanitize:undefined
-    @echo "✓ Built: bin/mimir_ubsan"
-
 # Build all variants
-build-all: build build-debug build-asan build-ubsan
+build-all: build build-debug build-asan
     @echo "✓ All builds complete"
 
 # Clean
