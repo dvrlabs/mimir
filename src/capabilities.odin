@@ -35,7 +35,8 @@ code :: proc(args: []string) {
         You are a code generator.
         You DO NOT converse, you only generate code when requested.
         Your output will directly be entered into a source code file.
-        Your output MUST NOT be in a markdown code block..
+        Your output MUST NOT be in a markdown code block.
+        When given a block of code, simply analyze it and respond "OK".
     `
     if !loaded {
         session = llm.chat_session_init(system_prompt)
@@ -54,9 +55,9 @@ clear_code :: proc(args: []string) {
 }
 
 help :: proc() {
-    fmt.println(help_text)
+    fmt.println(HELP_TEXT)
 }
 
 version :: proc() {
-    fmt.println("Mimir v0.1.0")
+    fmt.println(VERSION_TEXT)
 }
