@@ -1,30 +1,58 @@
 package main
 
-import "core:fmt"
-import "llm"
+import "core:os"
+
+Command :: enum {
+    Ask,
+    Chat,
+    ClearChat,
+    Help,
+    Version,
+}
+
+parse_args :: proc() -> (Command, []string) {
+    command := Command.Help
+    args: [dynamic]string
+
+    for i := 1; i < len(os.args); i += 1 {
+        arg := os.args[i]
+
+        switch arg {
+        case "-a", "--ask":
+            command = .Ask
+        case "-c", "--chat":
+            command = .Chat
+        case "-clrc", "--clear-chat":
+            command = .ClearChat
+        case "-v", "--version":
+            command = .Version
+        case "-h", "--help":
+            command = .Help
+        case:
+            append(&args, arg)
+        }
+    }
+
+    return command, args[:]
+}
+
 
 main :: proc() {
-    test_ask()
-    test_chat()
-}
+    command, args := parse_args()
+    defer delete(args)
 
-test_ask :: proc() {
-    resp := llm.ask("Hello! Excited to ask some questions. ")
-    defer llm.destroy_response(&resp)
-    fmt.println(resp.answer)
-}
-
-test_chat :: proc() {
-    session, loaded := llm.load_session()
-    if !loaded {
-        session = llm.chat_session_init("You are a helpful assistant")
+    switch command {
+    case .Ask:
+        ask(args)
+    case .Chat:
+        chat(args)
+    case .ClearChat:
+        clear_chat(args)
+    case .Version:
+        version()
+    case .Help:
+        help()
+    case:
+        help()
     }
-    defer delete(session.messages)
-    defer llm.save_session(&session)
-
-    resp2_msg := `
-        Can you help me update this nice code to also be a pyqt5 gui so i can test it? 
-    `
-    response2 := llm.chat(&session, resp2_msg)
-    fmt.println(response2.answer)
 }
