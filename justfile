@@ -49,8 +49,8 @@ dev *args: build-asan
     ASAN_OPTIONS=detect_leaks=1 ./bin/mimir_asan {{args}}
 
 # Run with Valgrind
-valgrind *args: build-debug
-    valgrind --leak-check=full --show-leak-kinds=all ./bin/mimir_debug {{args}}
+valgrind: build-debug
+    valgrind --leak-check=full --show-leak-kinds=all ./bin/mimir_debug -c "How many known galaxies are there?"
 
 # Quick test
 test: build-asan
