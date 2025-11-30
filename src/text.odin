@@ -13,4 +13,4 @@ Usage:
   mimir --version (-v)          Show version
 `
 
-VERSION_TEXT :: "Mimir v0.1.0"
+VERSION_TEXT :: "Mimir v0.2.0"

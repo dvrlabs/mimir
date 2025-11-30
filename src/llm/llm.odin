@@ -5,10 +5,6 @@ import "core:fmt"
 import "core:strings"
 import "http"
 
-ENDPOINT :: "http://localhost:8000/v1/chat/completions"
-DEFAULT_SYSTEM_ROLE :: "You are a helpful assistant."
-THOUGHT_ANSWER_DELIMITER :: "<|end|><|start|>assistant<|channel|>final<|message|>"
-
 LLM_Response :: struct {
     response: string,
     thoughts: string,
@@ -88,7 +84,7 @@ chat :: proc(session: ^Chat_Session, user_message: string) -> LLM_Response {
     // Debug: print the body to verify it's valid JSON
     // fmt.println("Request body:", body)
 
-    response := post_to_llm(ENDPOINT, body, headers)
+    response := post_to_llm(CONFIG.endpoint, body, headers)
     add_message(session, "assistant", response.answer)
     return response
 }
@@ -98,7 +94,7 @@ ask :: proc(question: string) -> LLM_Response {
     headers["Content-Type"] = "application/json"
     defer delete(headers)
 
-    escaped_system := json_escape(DEFAULT_SYSTEM_ROLE)
+    escaped_system := json_escape(CONFIG.default_system_role)
     defer delete(escaped_system)
     escaped_question := json_escape(question)
     defer delete(escaped_question)
@@ -118,7 +114,7 @@ ask :: proc(question: string) -> LLM_Response {
     // Debug: print the body to verify it's valid JSON
     // fmt.println("Request body:", body)
 
-    response := post_to_llm(ENDPOINT, body, headers)
+    response := post_to_llm(CONFIG.endpoint, body, headers)
     return response
 }
 
