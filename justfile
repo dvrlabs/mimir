@@ -4,18 +4,21 @@ default:
 
 # Build release version
 build:
+    @mkdir -p ./bin
     @echo "Building release..."
     odin build src -out:bin/mimir -o:speed
     @echo "✓ Built: bin/mimir"
 
 # Build debug version
 build-debug:
+    @mkdir -p ./bin
     @echo "Building debug..."
     odin build src -out:bin/mimir_debug -debug -o:none
     @echo "✓ Built: bin/mimir_debug"
 
 # Build with Address Sanitizer
 build-asan:
+    @mkdir -p ./bin
     @echo "Building with ASan..."
     odin build src -out:bin/mimir_asan -debug -o:none -sanitize:address
     @echo "✓ Built: bin/mimir_asan"
@@ -30,6 +33,7 @@ clean:
 
 # Install
 install: build
+    @mkdir -p ~/.config/mimir
     @mkdir -p ~/.local/bin
     cp bin/mimir ~/.local/bin/
     @chmod +x ~/.local/bin/mimir
@@ -37,7 +41,8 @@ install: build
 
 # Uninstall
 uninstall:
-    rm -f ~/.local/bin/mimir
+    rm -rfv ~/.config/mimir/
+    rm -fv ~/.local/bin/mimir
     @echo "✓ Uninstalled"
 
 # Run release
