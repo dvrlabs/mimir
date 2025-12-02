@@ -154,14 +154,26 @@ post_to_llm :: proc(url: string, body: string, headers: map[string]string = nil)
     message := first_choice["message"].(json.Object)
     content := message["content"].(json.String)
 
-    parts := strings.split(content, THOUGHT_ANSWER_DELIMITER)
-    defer delete(parts)
+    if CONFIG.thoughts {
+        parts := strings.split(content, THOUGHT_ANSWER_DELIMITER)
+        defer delete(parts)
+
+        llm_response := LLM_Response {
+            response = strings.clone(content),
+            thoughts = strings.clone(parts[0]),
+            answer   = strings.clone(parts[1]),
+            error    = false,
+        }
+        return llm_response
+    }
+
 
     llm_response := LLM_Response {
         response = strings.clone(content),
-        thoughts = strings.clone(parts[0]),
-        answer   = strings.clone(parts[1]),
+        thoughts = "",
+        answer   = strings.clone(content),
         error    = false,
     }
     return llm_response
+
 }

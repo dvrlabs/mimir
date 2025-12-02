@@ -11,11 +11,13 @@ THOUGHT_ANSWER_DELIMITER :: "<|end|><|start|>assistant<|channel|>final<|message|
 Config :: struct {
     endpoint:            string,
     default_system_role: string,
+    thoughts:            bool,
 }
 
 DEFAULT_CONFIG :: Config {
     endpoint            = "http://localhost:8000/v1/chat/completions",
     default_system_role = "You are a helpful assistant.",
+    thoughts            = false,
 }
 
 CONFIG: Config
