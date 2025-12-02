@@ -31,10 +31,15 @@ build-all: build build-debug build-asan
 clean:
     rm -rf bin/*
 
-# Install
-install: build
+# Create the config directory 
+preinstall:
     @mkdir -p ~/.config/mimir
     @mkdir -p ~/.local/bin
+    @echo "✓ ~/.local/bin/"
+    @echo "✓ ~/.config/mimir/"
+
+# Install
+install: preinstall build
     cp bin/mimir ~/.local/bin/
     @chmod +x ~/.local/bin/mimir
     @echo "✓ Installed to ~/.local/bin/mimir"
@@ -45,18 +50,9 @@ uninstall:
     rm -fv ~/.local/bin/mimir
     @echo "✓ Uninstalled"
 
-# Run release
-run *args: build
-    ./bin/mimir {{args}}
-
-# Development mode (ASan)
-dev *args: build-asan
-    ASAN_OPTIONS=detect_leaks=1 ./bin/mimir_asan {{args}}
-
 # Run with Valgrind
 valgrind: build-debug
     valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes ./bin/mimir_debug -c "How many known galaxies are there?"
-
 
 # Quick test
 test: build-asan

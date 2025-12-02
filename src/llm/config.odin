@@ -27,6 +27,7 @@ CONFIG: Config
 load_config :: proc "contextless" () {
     context = runtime.default_context() // Need context for file I/O, allocations, etc.
     conf_file := expand_home(CONFIG_PATH)
+    defer delete(conf_file)
 
     if !os.exists(conf_file) {
         data, marshal_err := json.marshal(DEFAULT_CONFIG, {pretty = true})
